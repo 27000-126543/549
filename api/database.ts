@@ -130,6 +130,68 @@ export function initDatabase() {
     createdAt: now(),
   });
 
+  const DEPT_MANAGER_ID = 'user-manager';
+  const DIRECTOR_ID = 'user-director';
+  const CTO_ID = 'user-cto';
+  const FINANCE_ID = 'user-finance';
+  const AUDITOR_ID = 'user-auditor';
+
+  store.users.set(DEPT_MANAGER_ID, {
+    id: DEPT_MANAGER_ID,
+    username: 'manager',
+    email: 'manager@example.com',
+    departmentId: DEPT_ID,
+    roleIds: [ROLE_ID],
+    projectIds: [PROJECT_ID],
+    tenantId: TENANT_ID,
+    status: 'active',
+    createdAt: now(),
+  });
+  store.users.set(DIRECTOR_ID, {
+    id: DIRECTOR_ID,
+    username: 'director',
+    email: 'director@example.com',
+    departmentId: DEPT_ID,
+    roleIds: [ROLE_ID],
+    projectIds: [PROJECT_ID],
+    tenantId: TENANT_ID,
+    status: 'active',
+    createdAt: now(),
+  });
+  store.users.set(CTO_ID, {
+    id: CTO_ID,
+    username: 'cto',
+    email: 'cto@example.com',
+    departmentId: DEPT_ID,
+    roleIds: [ROLE_ID],
+    projectIds: [PROJECT_ID],
+    tenantId: TENANT_ID,
+    status: 'active',
+    createdAt: now(),
+  });
+  store.users.set(FINANCE_ID, {
+    id: FINANCE_ID,
+    username: 'finance',
+    email: 'finance@example.com',
+    departmentId: DEPT_ID,
+    roleIds: [ROLE_ID],
+    projectIds: [PROJECT_ID],
+    tenantId: TENANT_ID,
+    status: 'active',
+    createdAt: now(),
+  });
+  store.users.set(AUDITOR_ID, {
+    id: AUDITOR_ID,
+    username: 'auditor',
+    email: 'auditor@example.com',
+    departmentId: DEPT_ID,
+    roleIds: [ROLE_ID],
+    projectIds: [PROJECT_ID],
+    tenantId: TENANT_ID,
+    status: 'active',
+    createdAt: now(),
+  });
+
   store.projects.set(PROJECT_ID, {
     id: PROJECT_ID,
     name: '默认项目',
@@ -139,20 +201,82 @@ export function initDatabase() {
     createdAt: now(),
   });
 
+  const FLOW_SEQUENTIAL_ID = 'flow-sequential';
+  const FLOW_COUNTERSIGN_ID = 'flow-countersign';
+  const FLOW_ORSIGN_ID = 'flow-orsign';
+
   store.approvalFlows.set(FLOW_ID, {
     id: FLOW_ID,
-    name: '默认审批流',
+    name: '默认审批流（顺序审批-演示）',
     nodes: [
       {
         id: 'node-1',
         name: '部门经理审批',
         type: 'sequential',
-        approvers: [ADMIN_ID],
+        approvers: [DEPT_MANAGER_ID],
+        timeout: 86400,
+        order: 0
+      },
+      {
+        id: 'node-2',
+        name: '总监审批',
+        type: 'sequential',
+        approvers: [DIRECTOR_ID],
+        timeout: 86400,
+        order: 1
+      },
+      {
+        id: 'node-3',
+        name: 'CTO终审',
+        type: 'sequential',
+        approvers: [CTO_ID],
+        timeout: 86400,
+        order: 2
+      }
+    ],
+    isDefault: true,
+    tenantId: TENANT_ID,
+  });
+
+  store.approvalFlows.set(FLOW_COUNTERSIGN_ID, {
+    id: FLOW_COUNTERSIGN_ID,
+    name: '财务+审计会签审批流',
+    nodes: [
+      {
+        id: 'node-c-1',
+        name: '财务审计会签（需两人都通过）',
+        type: 'countersign',
+        approvers: [FINANCE_ID, AUDITOR_ID],
+        timeout: 86400,
+        order: 0
+      },
+      {
+        id: 'node-c-2',
+        name: 'CTO终审',
+        type: 'sequential',
+        approvers: [CTO_ID],
+        timeout: 86400,
+        order: 1
+      }
+    ],
+    isDefault: false,
+    tenantId: TENANT_ID,
+  });
+
+  store.approvalFlows.set(FLOW_ORSIGN_ID, {
+    id: FLOW_ORSIGN_ID,
+    name: '技术线或签审批流',
+    nodes: [
+      {
+        id: 'node-o-1',
+        name: '技术负责人或签（任意一人通过即可）',
+        type: 'or_sign',
+        approvers: [DEPT_MANAGER_ID, DIRECTOR_ID, CTO_ID],
         timeout: 86400,
         order: 0
       }
     ],
-    isDefault: true,
+    isDefault: false,
     tenantId: TENANT_ID,
   });
 
@@ -170,24 +294,26 @@ export function initDatabase() {
     tenantId: TENANT_ID,
   });
 
-  const nodeIds = ['node-exec-1', 'node-exec-2', 'node-exec-3'];
-  const nodeNames = ['执行节点-01', '执行节点-02', '执行节点-03'];
-  const nodeIps = ['192.168.1.101', '192.168.1.102', '192.168.1.103'];
+  const nodeConfigs = [
+    { id: 'node-exec-1', name: '执行节点-01（重载）', ip: '192.168.1.101', cpuUsage: 85, memoryUsage: 78, queueDepth: 15, currentConcurrency: 18, tags: ['general'] },
+    { id: 'node-exec-2', name: '执行节点-02（空闲）', ip: '192.168.1.102', cpuUsage: 12, memoryUsage: 25, queueDepth: 1, currentConcurrency: 2, tags: ['general', 'cpu-intensive', 'data-processing'] },
+    { id: 'node-exec-3', name: '执行节点-03（中等）', ip: '192.168.1.103', cpuUsage: 45, memoryUsage: 55, queueDepth: 6, currentConcurrency: 8, tags: ['general', 'io-intensive'] },
+  ];
 
-  for (let i = 0; i < 3; i++) {
-    store.executionNodes.set(nodeIds[i], {
-      id: nodeIds[i],
-      name: nodeNames[i],
-      ip: nodeIps[i],
+  for (const cfg of nodeConfigs) {
+    store.executionNodes.set(cfg.id, {
+      id: cfg.id,
+      name: cfg.name,
+      ip: cfg.ip,
       status: 'online',
-      cpuUsage: Math.random() * 60 + 20,
-      memoryUsage: Math.random() * 50 + 30,
+      cpuUsage: cfg.cpuUsage,
+      memoryUsage: cfg.memoryUsage,
       diskUsage: Math.random() * 40 + 20,
-      loadAverage: [Math.random() * 2, Math.random() * 2, Math.random() * 2],
-      queueDepth: Math.floor(Math.random() * 10),
-      tags: ['general', 'cpu-intensive'],
+      loadAverage: [cfg.cpuUsage / 100 * 3, cfg.cpuUsage / 100 * 2.5, cfg.cpuUsage / 100 * 2],
+      queueDepth: cfg.queueDepth,
+      tags: cfg.tags,
       maxConcurrency: 20,
-      currentConcurrency: Math.floor(Math.random() * 10),
+      currentConcurrency: cfg.currentConcurrency,
       tenantId: TENANT_ID,
       lastHeartbeat: now(),
     });
@@ -277,12 +403,13 @@ export function initDatabase() {
       const duration = Math.floor(Math.random() * 300) + 30;
       const endTime = execStatus !== 'running' ? new Date(Date.now() - i * 3600000 + duration * 1000).toISOString() : undefined;
 
+      const nodeIdsArr = nodeConfigs.map(n => n.id);
       store.taskExecutions.set(execId, {
         id: execId,
         taskId,
         taskName: taskNames[i % taskNames.length],
         status: execStatus,
-        nodeId: nodeIds[i % 3],
+        nodeId: nodeIdsArr[i % 3],
         startTime,
         endTime,
         duration: execStatus !== 'running' ? duration : undefined,
@@ -306,6 +433,7 @@ export function initDatabase() {
           retryStrategy: 'exponential',
           nextRetryAt: new Date(Date.now() + 60000).toISOString(),
           status: 'pending_retry',
+          tenantId: TENANT_ID,
         });
       }
     }
@@ -330,16 +458,17 @@ export function initDatabase() {
   const timestamp = Date.now();
   for (let i = 0; i < 100; i++) {
     const ts = new Date(timestamp - i * 60000).toISOString();
+    const nodeIdsArr = nodeConfigs.map(n => n.id);
     for (let j = 0; j < 3; j++) {
       store.metrics.push({
-        nodeId: nodeIds[j],
+        nodeId: nodeIdsArr[j],
         metricType: 'cpu',
         value: Math.random() * 80 + 10,
         timestamp: ts,
         tenantId: TENANT_ID,
       });
       store.metrics.push({
-        nodeId: nodeIds[j],
+        nodeId: nodeIdsArr[j],
         metricType: 'memory',
         value: Math.random() * 70 + 20,
         timestamp: ts,

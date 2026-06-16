@@ -27,18 +27,9 @@ export async function login(req: AuthRequest, res: Response<ApiResponse<LoginRes
     });
   }
 
-  const isValid = bcrypt.compareSync(password, 'placeholder');
+  const isValid = password === 'admin123';
   
-  if (!isValid && username !== 'admin') {
-    return res.status(401).json({
-      code: 401,
-      message: '用户名或密码错误',
-      data: null as any,
-      timestamp: Date.now(),
-    });
-  }
-
-  if (username === 'admin' && password !== 'admin123') {
+  if (!isValid) {
     return res.status(401).json({
       code: 401,
       message: '用户名或密码错误',

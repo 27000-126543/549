@@ -246,6 +246,7 @@ export interface ApprovalRecord {
   status: ApprovalStatus;
   comment?: string;
   createdAt: string;
+  processedAt?: string;
 }
 
 export interface PendingApproval {
@@ -306,6 +307,8 @@ export interface FailedTask {
   retryStrategy: RetryStrategy;
   nextRetryAt?: string;
   status: FailedTaskStatus;
+  lastError?: string;
+  tenantId?: string;
 }
 
 export interface DeadLetter {

@@ -11,9 +11,22 @@ const apiClient = axios.create({
   },
 });
 
+function getTokenFromStorage(): string | null {
+  try {
+    const authStorage = localStorage.getItem('auth-storage');
+    if (authStorage) {
+      const parsed = JSON.parse(authStorage);
+      return parsed.state?.token || null;
+    }
+  } catch (e) {
+    console.error('Parse auth-storage error:', e);
+  }
+  return localStorage.getItem('token');
+}
+
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getTokenFromStorage();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,6 +43,7 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
+      localStorage.removeItem('auth-storage');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
