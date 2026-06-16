@@ -57,7 +57,7 @@ export default function Analytics() {
   const fetchDashboard = useCallback(async () => {
     try {
       const res = await getDashboard();
-      if (res.code === 0) {
+      if (res.code === 200) {
         setDashboardStats(res.data);
       }
     } catch (error) {
@@ -68,7 +68,7 @@ export default function Analytics() {
   const fetchSuccessRateTrend = useCallback(async (range: TimeRange) => {
     try {
       const res = await getSuccessRateTrend({ range });
-      if (res.code === 0) {
+      if (res.code === 200) {
         setSuccessRateTrend(res.data || []);
       }
     } catch (error) {
@@ -79,7 +79,7 @@ export default function Analytics() {
   const fetchCostAnalysis = useCallback(async (group: GroupBy) => {
     try {
       const res = await getCostAnalysis({ groupBy: group });
-      if (res.code === 0) {
+      if (res.code === 200) {
         setCostData(res.data || []);
       }
     } catch (error) {
@@ -90,7 +90,7 @@ export default function Analytics() {
   const fetchHeatmap = useCallback(async () => {
     try {
       const res = await getHeatmap();
-      if (res.code === 0) {
+      if (res.code === 200) {
         setHeatmapData(res.data || []);
       }
     } catch (error) {
@@ -101,7 +101,7 @@ export default function Analytics() {
   const fetchAuditLogs = useCallback(async (page: number, pageSize: number) => {
     try {
       const res = await getAuditLogs({ page, pageSize });
-      if (res.code === 0) {
+      if (res.code === 200) {
         const data = res.data as PageResponse<AuditLog>;
         setAuditLogs(data.list || []);
         setAuditTotal(data.total || 0);

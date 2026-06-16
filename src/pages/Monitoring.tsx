@@ -44,7 +44,7 @@ export default function Monitoring() {
   const fetchRealtimeData = useCallback(async () => {
     try {
       const res = await getRealtimeData();
-      if (res.code === 0) {
+      if (res.code === 200) {
         setRealtimeData(res.data);
         setLastUpdate(new Date());
       }
@@ -59,10 +59,10 @@ export default function Monitoring() {
         getMetricsHistory({ metricType: 'cpu', range }),
         getMetricsHistory({ metricType: 'memory', range }),
       ]);
-      if (cpuRes.code === 0) {
+      if (cpuRes.code === 200) {
         setCpuHistory(cpuRes.data || []);
       }
-      if (memoryRes.code === 0) {
+      if (memoryRes.code === 200) {
         setMemoryHistory(memoryRes.data || []);
       }
     } catch (error) {
@@ -73,7 +73,7 @@ export default function Monitoring() {
   const fetchLoadForecast = useCallback(async () => {
     try {
       const res = await getLoadForecast();
-      if (res.code === 0) {
+      if (res.code === 200) {
         setLoadForecast(res.data);
       }
     } catch (error) {
@@ -84,7 +84,7 @@ export default function Monitoring() {
   const fetchQueues = useCallback(async () => {
     try {
       const res = await getQueues();
-      if (res.code === 0) {
+      if (res.code === 200) {
         setQueues(res.data || []);
       }
     } catch (error) {

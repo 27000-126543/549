@@ -66,7 +66,7 @@ export async function request<T = any>(
       params: method === 'get' ? data : undefined,
       ...config,
     });
-    return response.data;
+    return response as unknown as ApiResponse<T>;
   } catch (error: any) {
     if (error.response?.data) {
       return error.response.data;

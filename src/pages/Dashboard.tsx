@@ -105,13 +105,13 @@ export default function Dashboard() {
           getHeatmap(),
         ]);
 
-        if (dashboardRes.code === 0) {
+        if (dashboardRes.code === 200) {
           setDashboardStats(dashboardRes.data);
         }
-        if (trendRes.code === 0) {
+        if (trendRes.code === 200) {
           setSuccessRateTrend(trendRes.data);
         }
-        if (heatmapRes.code === 0) {
+        if (heatmapRes.code === 200) {
           setHeatmapData(heatmapRes.data);
         }
       } catch (error) {
